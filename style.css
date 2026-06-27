@@ -1,442 +1,564 @@
-:root {
-    --bg-color: #0b1a0e;
-    --card-color: #142e19;
-    --border-color: #24542c;
-    --accent-color: #00ff66; /* Vibrant Neon Green */
-    --text-color: #ffffff;
-    --text-dim: #99c2a2;
-    --yellow: #ffcc00;
-}
-
+/* ==========================================================================
+   1. MASTER RESET & FIX TAP HIGHLIGHT (ILANGIN KOTAK BIRU TRANSPARAN HP)
+   ========================================================================== */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    user-select: none;
-    -webkit-user-select: none;
-    /* MENGHILANGKAN KOTAK BIRU SAAT DI-CLICK DI HP/CHROME */
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent; /* Kebal kotak biru pas di-tap */
     outline: none;
+    user-select: none;
 }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    display: flex;
-    flex-direction: column;
+    background-color: #0c150c;
+    color: #e0e0e0;
+    overflow: hidden;
     height: 100vh;
-    overflow: hidden;
-}
-
-/* TOP STATS BAR */
-.top-bar {
-    background-color: var(--card-color);
-    padding: 14px 12px;
-    display: grid;
-    grid-template-columns: 1fr 1.2fr 1fr;
-    gap: 8px;
-    border-bottom: 3px solid var(--border-color);
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-
-.stat-box {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
-.stat-label {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    font-weight: bold;
-    margin-bottom: 2px;
-    letter-spacing: 0.5px;
-}
-
-.stat-value {
-    font-size: 1.2rem;
-    font-weight: 900;
-    color: var(--yellow);
-    text-shadow: 0 0 8px rgba(255, 204, 0, 0.3);
-}
-
-.xp-bar-container {
+/* ==========================================================================
+   2. LAYOUT GAME & FIXED HEADER
+   ========================================================================== */
+#game-container {
+    max-width: 480px;
     width: 100%;
-    height: 10px;
-    background-color: #050a06;
-    border-radius: 5px;
-    overflow: hidden;
-    margin: 4px 0;
-    border: 1px solid #1f3d24;
-}
-
-.xp-bar {
-    width: 0%;
+    margin: 0 auto;
     height: 100%;
-    background: linear-gradient(90deg, #00bfff, #0077ff);
-    transition: width 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    background: #111d12;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
 }
 
-.xp-text {
-    font-size: 0.65rem;
-    color: #fff;
+header {
+    background: linear-gradient(180deg, #1b331e, #111d12);
+    padding: 15px;
+    border-bottom: 2px solid #27442b;
+    text-align: center;
+    z-index: 10;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#click-display {
+    font-size: 1.8rem;
     font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* MAIN CONTENT */
-.game-window {
+.xp-container {
+    width: 100%;
+    background: #080d09;
+    border-radius: 10px;
+    height: 16px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+#player-xp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #81c784);
+    width: 0%;
+    transition: width 0.1s ease;
+}
+
+#player-xp-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: bold;
+    line-height: 14px;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* ==========================================================================
+   3. TABS CONTENT PANEL (BIAR KONTEN TIAP TAB GA KETUTUPAN)
+   ========================================================================== */
+.main-content {
     flex: 1;
     overflow-y: auto;
-    padding: 16px;
-    padding-bottom: 95px;
+    position: relative;
 }
 
 .game-tab {
     display: none;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeIn 0.25s ease;
+    width: 100%;
+    height: 100%;
+    padding: 20px 15px 90px 15px; 
+    overflow-y: auto;
 }
 
 .game-tab.active {
-    display: flex;
+    display: block;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.98); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.tab-desc {
-    font-size: 0.85rem;
-    color: var(--text-dim);
-    margin-bottom: 18px;
-    text-align: center;
-}
-
-/* BATTLE TAB ELEMENTS */
-.stage-header h2 {
-    font-size: 1.6rem;
-    color: var(--accent-color);
-    text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
-    margin-bottom: 20px;
-    font-weight: 800;
-}
-
-.enemy-container {
-    background: radial-gradient(circle, #1a4222 0%, #0b1a0e 80%);
-    width: 100%;
-    max-width: 300px;
-    height: 260px;
-    border-radius: 24px;
+/* ==========================================================================
+   4. TAB BATTLE & ANIMASI TOMBOL BERDETAK PAS DIPENCET
+   ========================================================================== */
+#tab-battle {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    position: relative;
-    border: 2px solid var(--border-color);
-    margin-bottom: 25px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 30px rgba(0,0,0,0.8);
-    transition: transform 0.05s ease;
+    justify-content: space-around;
+}
+
+.enemy-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #27442b;
+    border-radius: 15px;
+    width: 100%;
+    padding: 15px;
+    text-align: center;
 }
 
 #enemy-sprite {
-    font-size: 6.5rem;
-    cursor: pointer;
-    transition: transform 0.05s ease;
+    font-size: 5.5rem;
+    margin: 20px 0;
+    transition: transform 0.08s ease;
+    display: inline-block;
 }
 
-.enemy-bounce {
-    animation: idleBounce 2s infinite ease-in-out;
-}
-
-@keyframes idleBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-
-/* ANIMASI JUICY HIT SHAKE */
-.hit-shake {
-    animation: hitShakeAnim 0.15s cubic-bezier(.36,.07,.19,.97) both;
-}
-
-@keyframes hitShakeAnim {
-    10%, 90% { transform: translate3d(-4px, 2px, 0); }
-    20%, 80% { transform: translate3d(4px, -2px, 0); }
-    30%, 50%, 70% { transform: translate3d(-6px, 0px, 0); }
-    40%, 60% { transform: translate3d(6px, 1px, 0); }
-}
-
-.hp-bar-container {
-    width: 85%;
-    height: 22px;
-    background-color: #050a06;
-    border-radius: 11px;
-    position: absolute;
-    bottom: 15px;
-    overflow: hidden;
-    border: 1px solid #244229;
-}
-
-.hp-bar {
+.hp-container {
     width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, #ff3333, #b30000);
-    transition: width 0.1s ease;
+    background: #220505;
+    border-radius: 10px;
+    height: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #551111;
+    margin-top: 8px;
 }
 
-.hp-text {
+#enemy-hp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #d32f2f, #f44336);
+    width: 100%;
+    transition: width 0.05s ease;
+}
+
+#enemy-hp-text {
     position: absolute;
     width: 100%;
     text-align: center;
-    top: 0;
-    left: 0;
     font-size: 0.8rem;
-    line-height: 22px;
+    font-weight: bold;
+    line-height: 18px;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* TOMBOL UTAMA LINGKARAN TENGAH BISA MANTUL/BERDETAK */
+#attack-btn {
+    width: 135px;
+    height: 135px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e65100, #ff8f00);
+    border: 4px solid #fff;
+    font-size: 1.2rem;
     font-weight: bold;
     color: white;
-    text-shadow: 1px 1px 3px black;
-}
-
-.main-click-btn {
-    background: linear-gradient(135deg, #00ff66, #00993d);
-    color: #051a0b;
-    border: none;
-    padding: 16px 45px;
-    font-size: 1.4rem;
-    font-weight: 900;
-    border-radius: 50px;
-    box-shadow: 0 6px 0 #006629, 0 10px 25px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5), inset 0 4px 10px rgba(255,255,255,0.4);
     cursor: pointer;
-    transition: transform 0.05s, box-shadow 0.05s;
-    width: 80%;
-    max-width: 250px;
-    letter-spacing: 1px;
-}
-
-.main-click-btn:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #006629, 0 4px 10px rgba(0,0,0,0.4);
-}
-
-/* LISTS & SHOP CARDS */
-.shop-list {
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.shop-card {
-    background-color: var(--card-color);
-    border: 2px solid var(--border-color);
-    border-radius: 16px;
-    padding: 14px 18px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    justify-content: center;
+    transition: transform 0.05s ease-in-out; /* Kecepatan respons detak super pas */
 }
 
-.shop-card.equipped {
-    border-color: var(--yellow);
-    background: linear-gradient(145deg, #1d3f23, #142e19);
-    box-shadow: 0 0 12px rgba(255, 204, 0, 0.2);
+/* Efek berdetak menciut membal pas jari nempel di screen */
+#attack-btn:active {
+    transform: scale(0.92) !important;
+}
+
+.quick-info-box {
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    border: 1px solid #222;
+}
+
+/* ==========================================================================
+   5. TAB ARMORY (SHOP WEAPONS)
+   ========================================================================== */
+.shop-card {
+    background: rgba(20, 35, 22, 0.7);
+    border: 1px solid #335c39;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .card-info {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
 }
 
 .card-icon {
-    font-size: 2.5rem;
-    background: rgba(0,0,0,0.2);
-    padding: 6px;
-    border-radius: 12px;
-    width: 55px;
-    height: 55px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #24472c;
+    font-size: 2.2rem;
 }
 
 .card-details h3 {
-    font-size: 1.05rem;
-    margin-bottom: 3px;
-    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
 }
 
 .card-details p {
-    font-size: 0.8rem;
-    color: var(--text-dim);
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+.card-multiplier {
+    font-size: 0.7rem;
+    color: #ffb300;
 }
 
 .shop-btn {
-    background: linear-gradient(135deg, #00ff66, #00b347);
-    color: #051a0b;
+    padding: 8px 16px;
+    border-radius: 6px;
     border: none;
-    padding: 10px 16px;
-    font-size: 0.9rem;
-    font-weight: 800;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 3px 0 #006629;
-}
-
-.shop-btn:active:not(:disabled) {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #006629;
-}
-
-.shop-btn:disabled {
-    background: #253d2a;
-    color: #526656;
-    box-shadow: none;
-    cursor: not-allowed;
-}
-
-.shop-btn.eq-btn {
-    background: linear-gradient(135deg, #00bfff, #0055ff);
+    font-weight: bold;
     color: white;
-    box-shadow: 0 3px 0 #003399;
+    cursor: pointer;
+    min-width: 90px;
+    background: #1976d2;
 }
 
-/* INVENTORY GRID */
-.pet-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+/* ==========================================================================
+   6. TAB EGGS (GACHA SYSTEM - FIX ANTI WARNA UNGU)
+   ========================================================================== */
+.egg-card-large {
+    background: rgba(25, 40, 27, 0.8);
+    border: 2px solid #3d6e44;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 18px;
+}
+
+.egg-header-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.egg-big-icon {
+    font-size: 2.8rem;
+}
+
+.egg-title-box h3 {
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.egg-title-box p {
+    font-size: 0.85rem;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.egg-pool-container {
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 12px;
+}
+
+.egg-pool-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #ddd;
+    padding: 3px 0;
+}
+
+/* Teks passive gacha - FIX diganti Kuning Emas biar ngga mati & ngga ungu */
+.pool-skill-badge {
+    color: #ffeb3b !important; 
+    font-size: 0.75rem;
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    padding-left: 18px;
+}
+
+/* Tombol Hatch - FIX diganti Ijo Hutan & Border Emas Biar Selaras */
+.hatch-btn-wide {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20) !important;
+    color: white !important;
+    border: 2px solid #ffd700 !important;
+    padding: 10px;
     width: 100%;
-    max-width: 500px;
-    margin-top: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    transition: transform 0.05s ease;
 }
 
-.pet-card {
-    background-color: var(--card-color);
-    border: 2px solid var(--border-color);
-    border-radius: 14px;
-    padding: 12px;
-    text-align: center;
-    position: relative;
+.hatch-btn-wide:active {
+    transform: scale(0.97);
+}
+
+.hatch-btn-wide:disabled {
+    background: #233025 !important;
+    color: #555 !important;
+    border-color: #333 !important;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ==========================================================================
+   7. TAB INVENTORY (DOUBLE PANEL INVENTORY)
+   ========================================================================== */
+.inventory-section-title {
+    font-size: 0.9rem;
+    color: #8bc34a;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.active-slots-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.active-pet-box {
+    flex: 1;
+    height: 85px;
+    background: rgba(0,0,0,0.4);
+    border: 2px dashed #3d6e44;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4px;
 }
 
-.pet-card.active-pet {
-    border-color: var(--yellow);
-    box-shadow: 0 0 12px rgba(255, 204, 0, 0.3);
+.active-pet-box.filled {
+    background: rgba(30, 54, 34, 0.8);
+    border-style: solid;
 }
 
-.pet-badge {
+.active-remove-btn {
+    background: #c62828;
+    color: white;
+    border: none;
+    font-size: 0.55rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+#owned-inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.inventory-card {
+    background: rgba(20, 30, 21, 0.8);
+    border: 1px solid #2e5433;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.inv-stack-badge {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    font-size: 0.65rem;
-    background-color: #333;
-    padding: 3px 6px;
-    border-radius: 6px;
+    top: 4px;
+    left: 4px;
+    background: #333;
+    font-size: 0.6rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.inv-type-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 0.55rem;
     font-weight: bold;
     text-transform: uppercase;
 }
 
-.pet-badge.common { background-color: #555; }
-.pet-badge.rare { background-color: #1976d2; }
-.pet-badge.legendary { background-color: #8e24aa; }
-.pet-badge.mythical { background-color: #d81b60; }
+.inv-type-badge.common { color: #8fa4b4; }
+.inv-type-badge.rare { color: #00e5ff; }
+.inv-type-badge.legendary { color: #ffea00; }
+.inv-type-badge.mythical { color: #ff1744; }
 
-.pet-card-icon {
-    font-size: 2.8rem;
-    margin: 8px 0;
+.inv-icon { font-size: 2rem; margin: 8px 0 4px 0; }
+.inv-name { font-size: 0.75rem; font-weight: bold; }
+.inv-cps { font-size: 0.65rem; color: #8ba88e; }
+
+.inv-action-lbl {
+    margin-top: 8px;
+    background: #2e7d32;
+    font-size: 0.65rem;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-.pet-card h4 {
-    font-size: 0.95rem;
-    margin-bottom: 4px;
+/* ==========================================================================
+   8. POPUP ANIME MODAL ENGINE (GACHA RESULT)
+   ========================================================================== */
+#hatch-modal-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
-.pet-card p {
+.modal-anime-card {
+    background: linear-gradient(135deg, #152618, #0b140c);
+    border: 3px solid #ffd700;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 340px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 30px #ffd70044;
+    animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+#modal-pet-tier {
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#modal-pet-icon {
+    font-size: 5rem;
+    margin: 15px 0;
+    display: block;
+    animation: bounceIcon 0.6s infinite alternate;
+}
+
+@keyframes bounceIcon {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+}
+
+#modal-pet-name { font-size: 1.4rem; font-weight: bold; color: white; }
+#modal-pet-cps { font-size: 1rem; color: #8bc34a; margin-top: 4px; }
+
+#modal-pet-skill-box {
+    background: rgba(0,0,0,0.4);
+    border-radius: 6px;
+    padding: 8px;
+    margin: 12px 0;
+    border: 1px solid #ffd70044;
+}
+
+#modal-pet-skill-text {
     font-size: 0.75rem;
-    color: var(--text-dim);
-    margin-bottom: 10px;
+    color: #fff !important; 
 }
 
-/* FLOATING TEXT ANIMATION */
+.modal-close-btn {
+    background: #ffd700;
+    color: #000;
+    border: none;
+    padding: 10px 25px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* ==========================================================================
+   9. FLOATING TEXT EFFECTS & FOOTER NAVIGATION
+   ========================================================================== */
 #floating-text-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     pointer-events: none;
-    z-index: 999;
-    overflow: hidden;
+    z-index: 50;
 }
 
 .floating-text {
     position: absolute;
-    font-weight: 900;
-    font-size: 1.4rem;
-    color: var(--yellow);
-    text-shadow: 2px 2px 0px #000;
-    animation: floatUp 0.7s forwards cubic-bezier(0.18, 0.89, 0.32, 1.28);
-}
-
-.floating-text.skill {
-    color: #ff5722;
-    font-size: 1.4rem;
-    background-color: rgba(0,0,0,0.8);
-    padding: 4px 10px;
-    border-radius: 8px;
-    border: 2px solid #ff5722;
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px #000;
+    animation: floatUp 0.7s ease-out forwards;
 }
 
 @keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0) scale(0.8) rotate(-10deg); }
-    50% { transform: translateY(-40px) scale(1.2) rotate(5deg); }
-    100% { opacity: 0; transform: translateY(-90px) scale(0.9) rotate(0deg); }
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-60px) scale(0.8); opacity: 0; }
 }
 
-/* BOTTOM NAVIGATION */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 68px;
-    background-color: var(--card-color);
-    border-top: 3px solid var(--border-color);
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    z-index: 100;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+nav {
+    position: absolute;
+    bottom: 0; left: 0; width: 100%;
+    height: 70px;
+    background: #0f1a10;
+    border-top: 2px solid #233d27;
+    display: flex;
+    z-index: 15;
 }
 
 .nav-btn {
-    background: none;
+    flex: 1;
+    background: transparent;
     border: none;
-    color: var(--text-dim);
-    font-size: 0.85rem;
-    font-weight: bold;
+    color: #888;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: bold;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    gap: 2px;
+    gap: 4px;
+}
+
+.nav-btn span:first-child {
+    font-size: 1.4rem;
 }
 
 .nav-btn.active {
-    color: #00ff66;
-    background-color: #0f2414;
-    border-bottom: 4px solid var(--accent-color);
-    }
+    color: #8bc34a;
+    background: rgba(139, 195, 74, 0.1);
+                }
