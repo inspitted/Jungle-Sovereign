@@ -3,218 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jungle Clicker Game</title>
+    <title>Jungle Clicker - Simulation Edition</title>
     <style>
-        /* --- CORE STYLES (MATCHING YOUR SCREENSHOT) --- */
+        /* --- SYSTEM BASE THEME LAYOUT --- */
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #0d2111;
-            color: #e2ebd5;
+            margin: 0; padding: 0;
+            background-color: #0d2111; color: #e2ebd5;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none;
-            overflow: hidden;
+            user-select: none; overflow: hidden;
         }
 
-        /* Top Header Stats */
+        /* Top Header Stats Global */
         .header-stats {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            background-color: #142e19;
-            padding: 10px 5px;
-            border-bottom: 3px solid #1a3c21;
-            text-align: center;
+            display: flex; justify-content: space-around; align-items: center;
+            background-color: #142e19; padding: 12px 8px;
+            border-bottom: 3px solid #1a3c21; text-align: center;
         }
-        .stat-box h2 { margin: 0; font-size: 1.15rem; color: #ffcc00; }
-        .stat-box p { margin: 2px 0 0 0; font-size: 0.75rem; color: #8ba88e; font-weight: bold; }
-        
+        .stat-box h2 { margin: 0; font-size: 1.2rem; color: #ffcc00; }
+        .stat-box p { margin: 2px 0 0 0; font-size: 0.7rem; color: #8ba88e; font-weight: bold; }
         .xp-container { flex: 1; margin: 0 15px; text-align: center; }
         .xp-bg { background-color: #0b180d; border-radius: 10px; height: 14px; width: 100%; overflow: hidden; position: relative; border: 1px solid #254d2c; }
-        .xp-bar { background: linear-gradient(90deg, #0088ff, #00d2ff); width: 0%; height: 100%; transition: width 0.2s ease; }
-        .xp-text { font-size: 0.65rem; color: #ffffff; position: absolute; width: 100%; text-align: center; top: 0; font-weight: bold; line-height: 14px; }
+        .xp-bar { background: linear-gradient(90deg, #a832ff, #329fff); width: 0%; height: 100%; transition: width 0.2s; }
+        .xp-text { font-size: 0.65rem; color: #fff; position: absolute; width: 100%; text-align: center; top: 0; font-weight: bold; line-height: 14px; }
 
-        /* Main Game Layout Box */
+        /* Main Scrollable Content Container Box */
         .game-container {
-            position: absolute;
-            top: 65px;
-            bottom: 60px; /* Jarak pas buat navbar bawah */
-            width: 100%;
-            overflow-y: auto; /* Aktifkan scroll di area konten saja */
-            -webkit-overflow-scrolling: touch;
+            position: absolute; top: 70px; bottom: 65px; width: 100%;
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
         }
-
-        /* FIX SCROLL KEPOTONG: Ditambahkan padding bawah tebel di setiap tab kontainer */
-        .game-tab {
-            display: none;
-            padding: 15px;
-            padding-bottom: 90px; /* Biar list paling bawah gak ketutupan navbar lagi! */
-            box-sizing: border-box;
-        }
+        .game-tab { display: none; padding: 15px; padding-bottom: 80px; box-sizing: border-box; }
         .game-tab.active { display: block; }
 
-        h2.tab-title { text-align: center; margin-top: 5px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        p.tab-subtitle { text-align: center; font-size: 0.8rem; color: #a2c2a7; margin-bottom: 20px; }
-
-        /* JUICY CLICK BUTTON ANIMATION (EFEK ATK TIDAK BORING) */
-        #attack-btn {
-            background: linear-gradient(145deg, #1e5228, #2d7a3c);
-            color: white;
-            border: 3px solid #41ab54;
-            border-radius: 50%;
-            width: 160px;
-            height: 160px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: block;
-            margin: 40px auto;
-            box-shadow: 0 8px 0 #153b1d, 0 15px 25px rgba(0,0,0,0.6);
-            transition: transform 0.05s ease, box-shadow 0.05s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        /* Efek Kilatan Flash Pas Hover */
-        #attack-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
-            transform: rotate(45deg);
-            transition: 0.5s;
-        }
-        #attack-btn:hover::after { left: 120%; top: 120%; }
-        /* Animasi Mantul Saat Ditekan */
-        #attack-btn:active {
-            transform: translateY(6px) scale(0.95);
-            box-shadow: 0 2px 0 #153b1d, 0 5px 10px rgba(0,0,0,0.4);
-            background: linear-gradient(145deg, #184220, #256431);
-        }
-
-        /* Enemy Battle Box Visuals */
-        #enemy-box {
-            background-color: #142e19;
-            border: 2px solid #254d2c;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            max-width: 320px;
-            margin: 0 auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        }
-        #enemy-sprite { font-size: 4rem; margin: 10px 0; display: inline-block; transition: transform 0.1s ease; }
+        /* --- TAB 1: BATTLE FIELD --- */
+        .stage-badge-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .badge-info { background: #1a3c21; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; border: 1px solid #2e6137; }
+        .badge-info.multiplier { color: #ffcc00; }
         
-        .hp-bg { background-color: #0b180d; border-radius: 8px; height: 18px; width: 100%; overflow: hidden; position: relative; margin-top: 10px; border: 1px solid #aa2222; }
-        .hp-bar { background: linear-gradient(90deg, #dd2c00, #ff6d00); width: 100%; height: 100%; transition: width 0.1s ease; }
-        .hp-text { font-size: 0.75rem; color: #ffffff; position: absolute; width: 100%; text-align: center; top: 0; font-weight: bold; line-height: 18px; }
+        .boss-arena { text-align: center; margin: 20px 0; }
+        #enemy-sprite { font-size: 5.5rem; display: inline-block; transition: transform 0.1s; }
+        #enemy-name { font-size: 1.2rem; font-weight: bold; margin-top: 5px; color: #ffffff; }
 
-        /* Card Layout Styles (Armory & Eggs) */
+        .battle-hp-wrapper { max-width: 340px; margin: 0 auto 25px auto; text-align: left; position: relative; }
+        .hp-label { font-size: 0.8rem; font-weight: bold; color: #ff5252; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+        .hp-bg { background: #0b180d; border-radius: 12px; height: 18px; overflow: hidden; border: 1px solid #aa2222; position: relative; }
+        .hp-bar { background: linear-gradient(90deg, #ff3333, #ff9100); width: 100%; height: 100%; transition: width 0.1s; }
+        .hp-text { position: absolute; width: 100%; text-align: right; padding-right: 10px; box-sizing: border-box; font-size: 0.75rem; color: #fff; top: 0; line-height: 18px; font-weight: bold; }
+
+        /* Big Punch Action Clicker Button */
+        .circle-click-wrapper { display: flex; justify-content: center; margin-bottom: 25px; }
+        #attack-btn {
+            background: linear-gradient(145deg, #1e5228, #2d7a3c); border: 4px solid #41ab54;
+            border-radius: 50%; width: 150px; height: 150px; cursor: pointer;
+            box-shadow: 0 8px 0 #153b1d, 0 12px 20px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 0.05s, box-shadow 0.05s;
+        }
+        #attack-btn:active { transform: translateY(6px) scale(0.96); box-shadow: 0 2px 0 #153b1d, 0 4px 10px rgba(0,0,0,0.4); }
+        .punch-icon { font-size: 3rem; }
+        .punch-txt { font-size: 0.65rem; font-weight: bold; color: #fff; margin-top: 5px; letter-spacing: 0.5px; }
+
+        /* Quick Info Panels At Bottom Battle Tab */
+        .quick-status-row { display: flex; gap: 10px; max-width: 360px; margin: 0 auto; }
+        .status-panel { flex: 1; background: #142e19; border: 2px solid #234c2a; border-radius: 10px; padding: 8px; text-align: center; }
+        .status-panel p { margin: 0; font-size: 0.6rem; color: #8ba88e; font-weight: bold; text-transform: uppercase; }
+        .status-panel h4 { margin: 4px 0 0 0; font-size: 0.85rem; color: #fff; }
+
+        /* --- CARDS LAYOUT (ARMORY & EGGS) --- */
         .shop-card {
-            background-color: #142e19;
-            border: 2px solid #234c2a;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            background-color: #142e19; border: 2px solid #234c2a; border-radius: 14px;
+            padding: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
         }
-        .card-main-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .card-info { display: flex; align-items: center; gap: 12px; }
-        .card-icon { font-size: 2rem; background-color: #0d2111; padding: 6px; border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
-        .card-details h3 { margin: 0; font-size: 1rem; color: #ffffff; }
+        .card-icon { font-size: 2.2rem; background: #0d2111; padding: 8px; border-radius: 10px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; }
+        .card-details h3 { margin: 0; font-size: 1rem; color: #fff; }
         .card-details p { margin: 3px 0 0 0; font-size: 0.75rem; color: #a2c2a7; }
-
-        /* Action Buttons */
+        .card-multiplier { font-size: 0.65rem; color: #ffcc00; font-weight: bold; margin-top: 2px; }
+        
         .shop-btn {
-            background: linear-gradient(135deg, #2e7d32, #1b5e20);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 16px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
-            box-shadow: 0 3px 0 #0e3011;
+            background: linear-gradient(135deg, #ffb300, #ff8f00); color: #0d2111;
+            border: none; border-radius: 18px; padding: 8px 20px; font-weight: bold; font-size: 0.85rem;
+            cursor: pointer; box-shadow: 0 3px 0 #b36200;
         }
-        .shop-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e3011; }
+        .shop-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #b36200; }
         .shop-btn:disabled { background: #2c3e30 !important; color: #5c7562 !important; box-shadow: none !important; cursor: not-allowed; }
-        .eq-btn { background: linear-gradient(135deg, #1565c0, #0d47a1); box-shadow: 0 3px 0 #05224e; }
-        .view-btn { background: linear-gradient(135deg, #e65100, #bf360c); box-shadow: 0 3px 0 #5e1903; font-size: 0.75rem; padding: 6px 12px; }
 
-        /* NEW FEATURE: EGG CONTENTS EXPANDABLE DROP-DOWN */
-        .egg-contents-box {
-            background-color: #0b180d;
-            border-radius: 8px;
-            padding: 8px 12px;
-            border: 1px dashed #386f41;
-            display: none; /* Diatur via JS toggle */
-            flex-direction: column;
-            gap: 6px;
+        /* --- EGGS LAYOUT WITH INTERNAL POOL LIST --- */
+        .egg-card-large { background: #142e19; border: 2px solid #234c2a; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+        .egg-header-row { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
+        .egg-big-icon { font-size: 3rem; }
+        .egg-title-box h3 { margin: 0; font-size: 1.1rem; color: #fff; }
+        .egg-title-box p { margin: 2px 0 0 0; font-size: 0.8rem; color: #ffcc00; font-weight: bold; }
+        
+        .egg-pool-container { background: #0b180d; border-radius: 10px; padding: 10px; border: 1px solid #234c2a; margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; }
+        .egg-pool-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; }
+        .pool-pet-info { color: #e2ebd5; }
+        .pool-pet-rate { font-weight: bold; color: #ffcc00; background: #142e19; padding: 2px 6px; border-radius: 4px; }
+        .pool-skill-badge { color: #a832ff; font-size: 0.65rem; margin-top: 1px; display: block; }
+
+        .hatch-btn-wide { width: 100%; background: linear-gradient(90deg, #9c27b0, #673ab7); color: white; border: none; padding: 10px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 0 #4a148c; }
+        .hatch-btn-wide:active { transform: translateY(3px); box-shadow: 0 1px 0 #4a148c; }
+
+        /* --- TAB 4: INVENTORY PACK LAYOUT --- */
+        .inventory-section-title { font-size: 0.9rem; font-weight: bold; color: #8ba88e; text-transform: uppercase; margin: 15px 0 8px 0; letter-spacing: 0.5px; }
+        
+        /* Active Pets Row Box (Atas) */
+        .active-slots-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .active-pet-box {
+            flex: 1; height: 100px; background: #142e19; border: 2px dashed #386f41; border-radius: 12px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; text-align: center; padding: 5px; box-sizing: border-box;
         }
-        .egg-contents-box.open { display: flex; }
-        .pet-pool-row { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 3px 0; border-bottom: 1px solid #142e19; }
-        .pet-pool-row:last-child { border-bottom: none; }
-        .pool-name { font-weight: bold; color: #fff; }
-        .pool-chance { color: #ffcc00; }
-        .pool-stats { color: #8ba88e; }
+        .active-pet-box.filled { border: 2px solid #4caf50; background: #142e19; box-shadow: 0 0 8px rgba(76,175,80,0.2); }
+        .active-remove-btn { position: absolute; bottom: 4px; width: 90%; background: rgba(244,67,54,0.15); color: #ff5252; border: 1px solid #ff5252; border-radius: 4px; font-size: 0.55rem; padding: 2px 0; cursor: pointer; font-weight: bold; }
+        
+        /* All Pets Owned Grid Box (Bawah) */
+        .owned-pets-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .inventory-card { background: #142e19; border: 2px solid #234c2a; border-radius: 12px; padding: 10px; text-align: center; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .inv-stack-badge { position: absolute; top: 6px; right: 6px; background: #234c2a; color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 8px; font-weight: bold; }
+        .inv-type-badge { font-size: 0.55rem; font-weight: bold; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; margin-bottom: 4px; color: #fff; }
+        .inv-type-badge.common { background: #616161; }
+        .inv-type-badge.rare { background: #0288d1; }
+        .inv-type-badge.legendary { background: #f57c00; }
+        .inv-type-badge.mythical { background: #d32f2f; }
+        
+        .inv-icon { font-size: 2.2rem; margin: 4px 0; }
+        .inv-name { font-size: 0.85rem; font-weight: bold; margin: 2px 0; }
+        .inv-cps { font-size: 0.7rem; color: #a2c2a7; margin-bottom: 6px; }
+        .inv-action-lbl { font-size: 0.65rem; font-weight: bold; color: #ffcc00; display: flex; align-items: center; gap: 2px; cursor: pointer; }
 
-        /* Inventory Cards Grid */
-        .pet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .pet-card { background-color: #142e19; border: 2px solid #234c2a; border-radius: 12px; padding: 10px; text-align: center; position: relative; }
-        .pet-card.active-pet { border-color: #ffcc00; box-shadow: 0 0 10px rgba(255,204,0,0.3); }
-        .pet-badge { position: absolute; top: 5px; left: 5px; font-size: 0.55rem; padding: 2px 5px; border-radius: 4px; font-weight: bold; color: white; text-transform: uppercase; }
-        .pet-badge.common { background-color: #757575; }
-        .pet-badge.rare { background-color: #1976d2; }
-        .pet-badge.legendary { background-color: #f57c00; }
-        .pet-badge.mythical { background-color: #d32f2f; }
-        .pet-card h4 { margin: 5px 0; font-size: 0.85rem; }
-        .pet-card p { margin: 2px 0; font-size: 0.7rem; color: #a2c2a7; }
-
-        /* Fixed Navigation Bottom Bar */
+        /* Navbar Sticky Bottom Layout */
         .navbar {
-            position: fixed;
-            bottom: 0; left: 0; width: 100%;
-            height: 60px;
-            background-color: #142e19;
-            border-top: 3px solid #1a3c21;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 999;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+            background-color: #142e19; border-top: 3px solid #1a3c21;
+            display: flex; justify-content: space-around; align-items: center; z-index: 999;
         }
         .nav-btn {
-            background: none; border: none;
-            color: #8ba88e; font-weight: bold; font-size: 0.85rem;
-            cursor: pointer; height: 100%; flex: 1;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
-            transition: background 0.2s, color 0.2s;
+            background: none; border: none; color: #8ba88e; font-weight: bold; font-size: 0.8rem;
+            cursor: pointer; height: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
         }
         .nav-btn.active { color: #2eff5d; background-color: #0b1a0e; border-bottom: 4px solid #2eff5d; }
 
-        /* Floating Damage Text Effect */
+        /* Floating Damage Text Box Core */
         #floating-text-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
         .floating-text { position: absolute; font-weight: bold; color: #fff; font-size: 1.2rem; text-shadow: 0 2px 4px #000; animation: floatUp 0.7s forwards ease-out; }
-        .floating-text.skill { font-size: 0.95rem; color: #ffeb3b; animation: floatUpSkill 1.2s forwards ease-out; text-align: center; width: 160px; }
-
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(0.8); opacity: 0; } }
-        @keyframes floatUpSkill { 0% { transform: translateY(0); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-40px); opacity: 0; } }
-        
-        .hit-shake { animation: shake 0.12s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(3px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
 <body>
 
-    <!-- Top Floating Header Tracker -->
     <div class="header-stats">
         <div class="stat-box">
             <p>ENERGY</p>
             <h2 id="click-display">0 ⚡</h2>
         </div>
         <div class="xp-container">
-            <p id="player-xp-text" style="color: #ffffff; font-size: 0.65rem; margin-bottom: 2px;">0 / 100 EXP</p>
+            <p id="player-xp-text">0 / 100 EXP</p>
             <div class="xp-bg">
                 <div id="player-xp-bar" class="xp-bar"></div>
                 <div class="xp-text">LEVEL <span id="player-level">1</span></div>
@@ -226,58 +168,101 @@
         </div>
     </div>
 
-    <!-- Main Dynamic Tab Scrolling Content Box -->
     <div class="game-container">
         
-        <!-- TAB 1: BATTLE FIELD -->
         <div id="tab-battle" class="game-tab active">
-            <h2 class="tab-title">⚔️ Wilderness Zone ⚔️</h2>
-            <p class="tab-subtitle">Stage Area: <span id="stage-number">1</span></p>
+            <div class="stage-badge-row">
+                <div class="badge-info">Jungle Stage <span id="stage-number">1</span></div>
+                <div class="badge-info multiplier" id="ui-hp-multiplier">⚖️ Enemy HP ×1.0</div>
+            </div>
             
-            <div id="enemy-box">
+            <div class="boss-arena">
                 <div id="enemy-sprite">🐒</div>
+                <div id="enemy-name">Wild Monkey</div>
+            </div>
+
+            <div class="battle-hp-wrapper">
+                <div class="hp-label">❤️ HP</div>
                 <div class="hp-bg">
                     <div id="enemy-hp-bar" class="hp-bar"></div>
-                    <div id="enemy-hp-text" class="hp-text">150 / 150 HP</div>
+                    <div id="enemy-hp-text" class="hp-text">150 / 150</div>
                 </div>
             </div>
 
-            <button id="attack-btn">TAP ATTACK! 🦖</button>
+            <div class="circle-click-wrapper">
+                <button id="attack-btn">
+                    <span class="punch-icon">✊</span>
+                    <span class="punch-txt">TAP TO ATTACK!</span>
+                </button>
+            </div>
+
+            <div class="quick-status-row">
+                <div class="status-panel">
+                    <p>Weapon</p>
+                    <h4 id="quick-weapon-lbl">👊 Fist</h4>
+                </div>
+                <div class="status-panel">
+                    <p>Active Pets</p>
+                    <h4 id="quick-pets-lbl">None</h4>
+                </div>
+            </div>
         </div>
 
-        <!-- TAB 2: WEAPON ARMORY -->
         <div id="tab-armory" class="game-tab">
-            <h2 class="tab-title">🪵 Weapon Armory ⚔️</h2>
-            <p class="tab-subtitle">Unlock higher tiers to strike down tougher bosses!</p>
+            <h2 style="text-align:center; margin: 5px 0;">🪵 Weapon Armory ⚔️</h2>
+            <p style="text-align:center; font-size:0.75rem; color:#a2c2a7; margin-bottom:15px;">Buy & equip weapons to increase tap damage.</p>
             <div id="weapon-list"></div>
         </div>
 
-        <!-- TAB 3: JUNGLE EGGS GACHA -->
         <div id="tab-eggs" class="game-tab">
-            <h2 class="tab-title">✨ Jungle Eggs Gacha ✨</h2>
-            <p class="tab-subtitle">Hatch mysterious capsules to obtain powerful wilderness companions!</p>
+            <h2 style="text-align:center; margin: 5px 0;">💎 Gacha Eggs 🥚</h2>
+            <p style="text-align:center; font-size:0.75rem; color:#a2c2a7; margin-bottom:15px;">Hatch eggs to discover powerful companion pets!</p>
             <div id="egg-list"></div>
         </div>
 
-        <!-- TAB 4: PET PACK INVENTORY -->
         <div id="tab-inventory" class="game-tab">
-            <h2 class="tab-title">🎒 Adventurer's Pack 🐾</h2>
-            <p class="tab-subtitle">Equipped Slot Limit: (<span id="equipped-pets-count">0</span> / 3)</p>
-            <div id="pet-inventory-list" class="pet-grid"></div>
+            <div class="inventory-section-title">🐾 Equipped Active Pets (Max 3)</div>
+            <div class="active-slots-row" id="active-slots-container">
+                </div>
+
+            <div class="inventory-section-title">📦 All Pets Owned</div>
+            <div class="owned-pets-grid" id="owned-inventory-grid">
+                </div>
         </div>
 
     </div>
 
-    <!-- Bottom Navigation Bar -->
     <div class="navbar">
-        <button class="nav-btn active" onclick="switchTab('tab-battle')">🏕️ Battle</button>
+        <button class="nav-btn active" onclick="switchTab('tab-battle')">🏠 Battle</button>
         <button class="nav-btn" onclick="switchTab('tab-armory')">⚔️ Armory</button>
-        <button class="nav-btn" onclick="switchTab('tab-eggs')">💎 Eggs</button>
-        <button class="nav-btn" onclick="switchTab('tab-inventory')">🎒 Inventory</button>
+        <button class="nav-btn" onclick="switchTab('tab-eggs')">🥚 Eggs</button>
+        <button class="nav-btn" onclick="switchTab('tab-inventory')">🐾 Inventory</button>
     </div>
 
-    <!-- Floating Pop Up Elements -->
     <div id="floating-text-container"></div>
+
+    <div id="hatch-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(145deg, #1b1633, #110e22); border: 2px solid #3c306e; border-radius: 28px; width: 85%; max-width: 320px; padding: 30px 22px; text-align: center; box-shadow: 0 0 30px rgba(111, 66, 251, 0.3); animation: popupZoom 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;">
+            
+            <div id="modal-pet-icon" style="font-size: 5.5rem; margin: 5px 0 10px 0; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));">🐶</div>
+            <div id="modal-pet-tier" style="font-size: 0.75rem; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: #ffcc00;">LEGENDARY</div>
+            <div id="modal-pet-name" style="font-size: 1.9rem; font-weight: bold; color: #ffffff; margin: 4px 0;">Shiba Inu</div>
+            <div id="modal-pet-cps" style="font-size: 0.95rem; color: #329fff; font-weight: bold; margin-bottom: 15px;">+50 CPS</div>
+            
+            <div id="modal-pet-skill-box" style="background: rgba(111, 66, 251, 0.15); border: 1px solid #4a3496; border-radius: 12px; padding: 10px; margin-bottom: 22px; display: none; text-align: center;">
+                <span id="modal-pet-skill-text" style="color: #bfa3ff; font-size: 0.75rem; font-weight: 500; line-height: 1.3;">🌟 Bark Shockwave 🔊: Deals 5x click damage instantly.</span>
+            </div>
+            
+            <button onclick="closeHatchModal()" style="width: 100%; background: linear-gradient(90deg, #9c27b0, #673ab7); color: white; border: none; padding: 14px; border-radius: 25px; font-weight: bold; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 0 #4a148c; transition: transform 0.1s;">Awesome! ✨</button>
+        </div>
+    </div>
+
+    <style>
+    @keyframes popupZoom {
+        0% { transform: scale(0.4); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    </style>
 
     <script src="script.js"></script>
 </body>
