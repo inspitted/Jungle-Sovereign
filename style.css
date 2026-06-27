@@ -21,26 +21,48 @@ body {
 }
 
 /* ==========================================================================
-   2. LAYOUT GAME & FIXED HEADER
+   FIX LAYOUT: MENAMPILKAN KEMBALI NAVIGASI BAWAH YANG KETUTUP
    ========================================================================== */
 #game-container {
     max-width: 480px;
     width: 100%;
     margin: 0 auto;
-    height: 100%;
+    height: 100vh; /* Dipaksa pas sesuai tinggi layar HP */
+    position: relative;
     display: flex;
     flex-direction: column;
     background: #111d12;
-    position: relative;
     box-shadow: 0 0 20px rgba(0,0,0,0.8);
 }
 
-header {
-    background: linear-gradient(180deg, #1b331e, #111d12);
-    padding: 15px;
-    border-bottom: 2px solid #27442b;
-    text-align: center;
-    z-index: 10;
+.main-content {
+    flex: 1;
+    overflow-y: hidden; /* Mencegah seluruh isi game nge-scroll ke bawah nav */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-tab {
+    display: none;
+    width: 100%;
+    height: 100%;
+    padding: 15px 15px 85px 15px; /* Kasih space aman di bawah biar gak nabrak nav */
+    overflow-y: auto; /* Scroll cuman terjadi di dalam tab aja */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Serta pastiin nav lu posisinya nempel mati di paling bawah container */
+nav {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: #0f1a10;
+    border-top: 2px solid #233d27;
+    display: flex;
+    z-index: 99; /* Dipaksa paling depan biar selalu keliatan */
 }
 
 .stats-row {
