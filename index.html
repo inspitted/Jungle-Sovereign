@@ -3,103 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Primal Jungle Clicker</title>
+    <title>Jungle Survival RPG</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="game-container">
-        <header>
-            <div class="stats-row">
-                <div id="click-display">0 ⚡</div>
-                <div style="font-size: 0.85rem; color: #8bc34a; font-weight: bold;">
-                    LVL <span id="player-level">1</span>
-                </div>
-            </div>
-            <div class="xp-container">
-                <div id="player-xp-bar"></div>
-                <div id="player-xp-text">0 / 100 EXP</div>
-            </div>
-            <div style="font-size: 0.75rem; color: #aaa; margin-top: 5px; text-align: left;">
-                ⚡/s (CPS): <span id="cps-display" style="color: #00e5ff; font-weight: bold;">0 ⚡/s</span>
-            </div>
-        </header>
-
-        <main class="main-content">
-            
-            <div id="tab-battle" class="game-tab active">
-                <div class="enemy-card">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #ffb300; font-weight: bold;">
-                        <span>STAGE <span id="stage-number">1</span></span>
-                        <span id="ui-hp-multiplier">⚖️ Enemy HP ×1.0</span>
-                    </div>
-                    <div id="enemy-sprite">🐒</div>
-                    <div id="enemy-name" style="font-weight: bold; font-size: 1.1rem; color: #ff4444;">Wild Monkey</div>
-                    <div class="hp-container">
-                        <div id="enemy-hp-bar"></div>
-                        <div id="enemy-hp-text">150 / 150</div>
-                    </div>
-                </div>
-
-                <button id="attack-btn">TAP!</button>
-
-                <div class="quick-info-box">
-                    <div>⚔️ Weapon: <span id="quick-weapon-lbl" style="color: #fff; font-weight: bold;">👊 Fist</span></div>
-                    <div style="margin-top: 4px;">🐾 Equipped: <span id="quick-pets-lbl" style="color: #8bc34a;">None</span></div>
-                </div>
-            </div>
-
-            <div id="tab-armory" class="game-tab">
-                <h2 class="inventory-section-title">🗡️ PREHISTORIC ARMORY</h2>
-                <div id="weapon-list"></div>
-            </div>
-
-            <div id="tab-eggs" class="game-tab">
-                <h2 class="inventory-section-title">🥚 NEST OF EGGS</h2>
-                <div id="egg-list"></div>
-            </div>
-
-            <div id="tab-inventory" class="game-tab">
-                <h2 class="inventory-section-title">🐾 ACTIVE SLOTS (MAX 3)</h2>
-                <div class="active-slots-row" id="active-slots-container"></div>
-
-                <h2 class="inventory-section-title" style="margin-top: 15px;">🎒 PET STORAGE</h2>
-                <div id="owned-inventory-grid"></div>
-            </div>
-
-            <div id="floating-text-container"></div>
-
-        </main>
-
-        <nav>
-            <button class="nav-btn active" onclick="switchTab('tab-battle')">
-                <span>⚔️</span><span>Battle</span>
-            </button>
-            <button class="nav-btn" onclick="switchTab('tab-armory')">
-                <span>🪓</span><span>Armory</span>
-            </button>
-            <button class="nav-btn" onclick="switchTab('tab-eggs')">
-                <span>🥚</span><span>Eggs</span>
-            </button>
-            <button class="nav-btn" onclick="switchTab('tab-inventory')">
-                <span>🎒</span><span>Bag</span>
-            </button>
-        </nav>
-
-        <div id="hatch-modal-overlay">
-            <div class="modal-anime-card">
-                <div id="modal-pet-tier">COMMON</div>
-                <div id="modal-pet-icon">🐶</div>
-                <div id="modal-pet-name">Dog</div>
-                <div id="modal-pet-cps">+10 CPS</div>
-                <div id="modal-pet-skill-box">
-                    <div id="modal-pet-skill-text">✨ Passive Skill Effect Here</div>
-                </div>
-                <button class="modal-close-btn" onclick="closeHatchModal()">OKAY</button>
-            </div>
+    <header class="hud">
+        <div class="stats-row">
+            <span>Level: <span id="player-level">1</span></span>
+            <span>Stage: <span id="current-stage">1</span></span>
         </div>
+        <div class="exp-bar-container">
+            <div id="exp-bar" class="exp-bar"></div>
+        </div>
+        <div class="currency-row">
+            <span>Clicks: <strong id="click-count">0</strong></span>
+            <span class="cps-text">(<span id="cps-count">0</span>/s)</span>
+        </div>
+    </header>
 
-    </div>
+    <main id="main-content">
+        <section id="tab-battle" class="tab-content active">
+            <div class="battle-arena">
+                <h2 id="enemy-name">Jungle Slime</h2>
+                <div class="hp-bar-container">
+                    <div id="hp-bar" class="hp-bar"></div>
+                    <span id="hp-text">150 / 150</span>
+                </div>
+                <div id="enemy-sprite" class="enemy-sprite">🦠</div>
+                <div class="battle-stats">
+                    <p>Current Weapon: <span id="active-weapon-name">Bare Hands 👊</span></p>
+                    <p>Damage per click: <span id="click-power">1</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-armory" class="tab-content">
+            <h2>🌿 Armory</h2>
+            <div id="armory-list" class="list-container">
+                </div>
+        </section>
+
+        <section id="tab-gacha" class="tab-content">
+            <h2>🥚 Pet Gacha</h2>
+            <div id="gacha-list" class="list-container">
+                </div>
+        </section>
+
+        <section id="tab-inventory" class="tab-content">
+            <h2>🎒 Inventory</h2>
+            <div class="inventory-section">
+                <h3>Equipped Pets (Max 3)</h3>
+                <div id="equipped-pets" class="pet-grid"></div>
+            </div>
+            <div class="inventory-section">
+                <h3>My Pets</h3>
+                <div id="pet-inventory" class="pet-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-target="tab-battle">⚔️ Battle</button>
+        <button class="nav-btn" data-target="tab-armory">🌿 Armory</button>
+        <button class="nav-btn" data-target="tab-gacha">🥚 Gacha</button>
+        <button class="nav-btn" data-target="tab-inventory">🎒 Inventory</button>
+    </nav>
+
+    <div id="floating-text-container"></div>
 
     <script src="script.js"></script>
 </body>
